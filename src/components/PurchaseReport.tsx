@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -26,6 +25,17 @@ const PurchaseReport = () => {
     { week: "สัปดาห์ 4", quantity: 140, amount: 36000 },
   ];
 
+  // Mock daily purchase data
+  const dailyPurchaseData = [
+    { day: "วันจันทร์", quantity: 65, amount: 18000 },
+    { day: "วันอังคาร", quantity: 72, amount: 20000 },
+    { day: "วันพุธ", quantity: 58, amount: 15500 },
+    { day: "วันพฤหัสบดี", quantity: 85, amount: 23000 },
+    { day: "วันศุกร์", quantity: 95, amount: 26000 },
+    { day: "วันเสาร์", quantity: 110, amount: 29000 },
+    { day: "วันอาทิตย์", quantity: 68, amount: 18500 },
+  ];
+
   const branchPurchaseData = [
     { branch: "สาขา A", quantity: 850, amount: 220000 },
     { branch: "สาขา B", quantity: 680, amount: 175000 },
@@ -40,6 +50,7 @@ const PurchaseReport = () => {
   ];
 
   const getCurrentData = () => {
+    if (period === "daily") return dailyPurchaseData;
     if (period === "weekly") return weeklyPurchaseData;
     return monthlyPurchaseData;
   };
@@ -54,6 +65,18 @@ const PurchaseReport = () => {
   };
 
   const stats = getTotalStats();
+
+  const getDataKey = () => {
+    if (period === "daily") return "day";
+    if (period === "weekly") return "week";
+    return "month";
+  };
+
+  const getPeriodLabel = () => {
+    if (period === "daily") return "รายวัน";
+    if (period === "weekly") return "รายสัปดาห์";
+    return "รายเดือน";
+  };
 
   return (
     <div className="space-y-6">
@@ -128,6 +151,7 @@ const PurchaseReport = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="daily">รายวัน</SelectItem>
                     <SelectItem value="weekly">รายสัปดาห์</SelectItem>
                     <SelectItem value="monthly">รายเดือน</SelectItem>
                   </SelectContent>
@@ -144,13 +168,13 @@ const PurchaseReport = () => {
           {/* Purchase Amount Chart */}
           <Card className="bg-white/80 backdrop-blur-md border-white/20">
             <CardHeader>
-              <CardTitle>ยอดซื้อ ({period === "monthly" ? "รายเดือน" : "รายสัปดาห์"})</CardTitle>
+              <CardTitle>ยอดซื้อ ({getPeriodLabel()})</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={getCurrentData()}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey={period === "monthly" ? "month" : "week"} />
+                  <XAxis dataKey={getDataKey()} />
                   <YAxis />
                   <Tooltip formatter={(value) => [`฿${Number(value).toLocaleString()}`, "ยอดซื้อ"]} />
                   <Bar dataKey="amount" fill="#f97316" />
@@ -162,13 +186,13 @@ const PurchaseReport = () => {
           {/* Purchase Quantity Chart */}
           <Card className="bg-white/80 backdrop-blur-md border-white/20">
             <CardHeader>
-              <CardTitle>จำนวนที่ซื้อ ({period === "monthly" ? "รายเดือน" : "รายสัปดาห์"})</CardTitle>
+              <CardTitle>จำนวนที่ซื้อ ({getPeriodLabel()})</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={getCurrentData()}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey={period === "monthly" ? "month" : "week"} />
+                  <XAxis dataKey={getDataKey()} />
                   <YAxis />
                   <Tooltip formatter={(value) => [Number(value).toLocaleString(), "จำนวน"]} />
                   <Line type="monotone" dataKey="quantity" stroke="#06b6d4" strokeWidth={2} />
