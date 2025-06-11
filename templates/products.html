@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการสินค้า - ระบบจัดการสินค้า</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="package" class="h-8 w-8 text-purple-600"></i>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        ระบบจัดการสินค้า
+                    </h1>
+                </div>
+                <a href="index.html" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md">← กลับหน้าหลัก</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i data-lucide="package" class="h-6 w-6 mr-2 text-blue-600"></i>
+                จัดการสินค้า
+            </h2>
+
+            <!-- Header Actions -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
+                <div class="relative flex-1 max-w-md">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4"></i>
+                    <input type="text" id="searchInput" placeholder="ค้นหาสินค้า..." class="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button onclick="showAddProductForm()" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                    <i data-lucide="plus" class="h-4 w-4 inline mr-2"></i>
+                    เพิ่มสินค้า
+                </button>
+            </div>
+
+            <!-- Add Product Form (Hidden by default) -->
+            <div id="addProductForm" class="hidden bg-white/80 backdrop-blur-md border border-white/20 rounded-lg p-6 shadow-lg mb-6">
+                <h3 class="text-lg font-semibold mb-4">เพิ่มสินค้าใหม่</h3>
+                <form id="productForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">ชื่อสินค้า</label>
+                            <input type="text" id="productName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">ราคา</label>
+                            <input type="number" id="productPrice" min="0" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">จำนวนคงเหลือ</label>
+                            <input type="number" id="productStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">หมวดหมู่</label>
+                            <select id="productCategory" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                                <option value="">เลือกหมวดหมู่</option>
+                                <option value="electronics">อิเล็กทรอนิกส์</option>
+                                <option value="clothing">เสื้อผ้า</option>
+                                <option value="food">อาหาร</option>
+                                <option value="books">หนังสือ</option>
+                                <option value="other">อื่นๆ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium mb-2">รายละเอียด</label>
+                        <textarea id="productDescription" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                    </div>
+                    <div class="flex gap-4 mt-6">
+                        <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                            บันทึก
+                        </button>
+                        <button type="button" onclick="hideAddProductForm()" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                            ยกเลิก
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Sample products -->
+                <div class="bg-white/80 backdrop-blur-md border border-white/20 rounded-lg p-6 shadow-lg">
+                    <div class="aspect-square bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                        <i data-lucide="image" class="h-12 w-12 text-gray-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">สินค้า A</h3>
+                    <p class="text-gray-600 text-sm mb-3">รายละเอียดสินค้า A</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xl font-bold text-purple-600">฿100</span>
+                        <span class="text-sm text-gray-500">คงเหลือ: 50</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                            แก้ไข
+                        </button>
+                        <button class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                            ลบ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        let products = [
+            {
+                id: 1,
+                name: 'สินค้า A',
+                price: 100,
+                stock: 50,
+                category: 'electronics',
+                description: 'รายละเอียดสินค้า A'
+            },
+            {
+                id: 2,
+                name: 'สินค้า B',
+                price: 200,
+                stock: 30,
+                category: 'clothing',
+                description: 'รายละเอียดสินค้า B'
+            },
+            {
+                id: 3,
+                name: 'สินค้า C',
+                price: 150,
+                stock: 25,
+                category: 'food',
+                description: 'รายละเอียดสินค้า C'
+            }
+        ];
+
+        function showAddProductForm() {
+            document.getElementById('addProductForm').classList.remove('hidden');
+        }
+
+        function hideAddProductForm() {
+            document.getElementById('addProductForm').classList.add('hidden');
+            document.getElementById('productForm').reset();
+        }
+
+        function renderProducts(productsToRender = products) {
+            const grid = document.getElementById('productsGrid');
+            
+            if (productsToRender.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">ไม่พบสินค้า</div>';
+                return;
+            }
+
+            grid.innerHTML = productsToRender.map(product => `
+                <div class="bg-white/80 backdrop-blur-md border border-white/20 rounded-lg p-6 shadow-lg">
+                    <div class="aspect-square bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                        <i data-lucide="image" class="h-12 w-12 text-gray-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">${product.name}</h3>
+                    <p class="text-gray-600 text-sm mb-3">${product.description}</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xl font-bold text-purple-600">฿${product.price.toLocaleString()}</span>
+                        <span class="text-sm text-gray-500">คงเหลือ: ${product.stock}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editProduct(${product.id})" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                            แก้ไข
+                        </button>
+                        <button onclick="deleteProduct(${product.id})" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-3 rounded text-sm transition-colors">
+                            ลบ
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.description.toLowerCase().includes(searchTerm)
+            );
+            renderProducts(filteredProducts);
+        });
+
+        // Add product form submission
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newProduct = {
+                id: Date.now(),
+                name: document.getElementById('productName').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                stock: parseInt(document.getElementById('productStock').value),
+                category: document.getElementById('productCategory').value,
+                description: document.getElementById('productDescription').value
+            };
+
+            products.push(newProduct);
+            renderProducts();
+            hideAddProductForm();
+            alert('เพิ่มสินค้าสำเร็จ!');
+        });
+
+        function editProduct(id) {
+            // Implementation for editing product
+            alert(`แก้ไขสินค้า ID: ${id}`);
+        }
+
+        function deleteProduct(id) {
+            if (confirm('ยืนยันการลบสินค้า?')) {
+                products = products.filter(product => product.id !== id);
+                renderProducts();
+                alert('ลบสินค้าสำเร็จ!');
+            }
+        }
+
+        // Initial render
+        renderProducts();
+    </script>
+</body>
+</html>
